@@ -3,27 +3,15 @@ dev environment:
   Fedora 17, gcc 4.7 with c++0x
 
 design logic: 
-  1. I use C-style file functions (fgets, fprintf) to process the file, instead of 
-     cin and cout, since cin use inherit mechinism within implementtaion whick make it 
-     very slow when processing large files. Using fgets instead of fscanf is to avoid
-     potential buffer overflow bug.
+  1. I use C-style file functions (fgets, fprintf) to process the file, instead of cin and cout, since cin use inherit mechinism within implementtaion whick make it very slow when processing large files. Using fgets instead of fscanf is to avoid potential buffer overflow bug.
 
-  2. To add flexibility to my program, I use "function" object map to get diff function 
-     between differe type pairs. For example, diff between int and int can be fetched 
-     by using key "intDiffInt" and "strDiffStr" for diff between 2 string types, 
-     I could have made it more object-orientate style by writing a virtual class, 
-     that will an elegant program looks cumbersome 
+  2. To add flexibility to my program, I use "function" object map to get diff function between differe type pairs. For example, diff between int and int can be fetched by using key "intDiffInt" and "strDiffStr" for diff between 2 string types, I could have made it more object-orientate style by writing a virtual class, that will an elegant program looks cumbersome 
 
-  3. Each "diff" function is like "addon" to this program, To support maximum 
-     flexiblity, user can define its own diff function by applying function signiture
-     int strDiffStr(std::string &l, std::string &r, std::string &res)
-     after implementing this function, user need to regsiter this addon by calling. 
-     registerDiffType(key, funcName). For example, to get diff between int and date,
-     user can implement its own function and register with "intDate". Another option is to
-     overload operator with template argument, again, my intenstion is to 
+  3. Each "diff" function is like "addon" to this program, To support maximum flexiblity, user can define its own diff function by applying function signiture 
+  int strDiffStr(std::string &l, std::string &r, std::string &res)
+after implementing this function, user need to regsiter this addon by calling. registerDiffType(key, funcName). For example, to get diff between int and date, user can implement its own function and register with "intDate". Another option is to overload operator with template argument, again, my intenstion is to 
       
-  4. I use char "_" to separate column type, each value is no more that 255 characater 
-     in length. The empty line will be skiped in file. 
+  4. I use char "_" to separate column type, each value is no more that 255 characater in length. The empty line will be skiped in file. 
 
 how to compile, run and test:
   0. use make to compile
