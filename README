@@ -2,16 +2,42 @@
 dev environment:
   Fedora 17, gcc 4.7 with c++0x
 
+files:
+  DataSource.h: Define interface for datasource class. This interface can be used for getting and writing data from/to file, database or network.
+
+  FileDataSource.h: Inherit DataSource interface and implment default behavior for file related operations. 
+
+  InputFileDataSource.h: Specific implementation for input file 
+
+  OutputFileDataSource.h: Specific implementation for output file
+
+  DataSourceManager.h: Manage all the datasource, include but not limit to create, get, update and delete datasource object. With manger class, we can easily use different datasource for input or output. For example, we can convenitently use file and database for input and network for output.
+
+  DataSourceFactory.h: Facotry is used to create class for each specific types.
+
+  Diff.h: Diff class define inteface for diff object, which implementas specific diff operation of 2 types. 
+
+  IntDiffInt.h: Specific diff behavior between 2 int object 
+
+  StringDiffString.h: Specific diff behavior between 2 string object 
+
+  DiffManager.h: Manage all the diff object of 2 types. There is a map inside DiffManage to avoid creating duplicate diff objects. 
+
+  DiffFactory.h: Similar to DataSourceFactory class. 
+
+  Utils.h: Define serveral helper functions.
+
+
 design logic: 
-  1. I use C-style file functions (fgets, fprintf) to process the file, instead of cin and cout, since cin use inherit mechinism within implementtaion whick make it very slow when processing large files. Using fgets instead of fscanf is to avoid potential buffer overflow bug.
+  1. DataSource class is an abstraction for data source. User need to inherit the datasource  interface to create specific datasource class. The DataSource Manager class is used to manage all the available datasources. This will help to seperate specific implementation of each data source from all data sources' common interface. The Factory class is used to create specific data source object. 
 
-  2. To add flexibility to my program, I use "function" object map to get diff function between differe type pairs. For example, diff between int and int can be fetched by using key "intDiffInt" and "strDiffStr" for diff between 2 string types, I could have made it more object-orientate style by writing a virtual class, that will an elegant program looks cumbersome 
+  2. Diff class is used to define the diff operation between 2 types. User need to inherit Diff virtual class in order to define specific diff operation. Similar to datasource, the diff class also has its own manager factory class. 
 
-  3. Each "diff" function is like "addon" to this program, To support maximum flexiblity, user can define its own diff function by applying function signiture 
-  int strDiffStr(std::string &l, std::string &r, std::string &res)
-after implementing this function, user need to regsiter this addon by calling. registerDiffType(key, funcName). For example, to get diff between int and date, user can implement its own function and register with "intDate". Another option is to overload operator with template argument, again, my intenstion is to 
-      
-  4. I use char "_" to separate column type, each value is no more that 255 characater in length. The empty line will be skiped in file. 
+  3. I extensively use shared pointer instead of nake pointer to avoid potential memory leaking issue.
+
+  4. I use C-style file functions (fgets, fprintf) to process the file, instead of cin and cout, since cin use inherit mechinism within implementation which make it very slow when processing large files. Using fgets instead of fscanf is to avoid potential buffer overflow bug.
+
+  5. I use char "_" to separate column type, each value should be no more that 255 characater in length. The empty line inside file will be skiped when comparing. 
 
 how to compile, run and test:
   0. use make to compile
@@ -19,6 +45,9 @@ how to compile, run and test:
   2. testcase dir contain serveral testcases
 
 possible improvement:
-  1. Add more test caes to test the corner and extreme cases.
-  2. Add XML config to define which diff function currently support in this program, load 
+  1. Refactor factory and manager to create an abstract base class. 
+  2. Add exeception control related code to do more check about input
+  3. Add all the config related parameter into static Utils class 
+  4. Add more test caes to test the corner and extreme cases.
+  5. Add XML config to define which diff function currently support in this program, load 
      each addon function without re-compile the program.
